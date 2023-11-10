@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheader',
+    'corsheaders',
     'boxing',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -103,10 +103,15 @@ WSGI_APPLICATION = 'Fights.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'angular-db',
+        'USER': 'gintoki',
+        'PASSWORD': 'Firestand1',
+        'HOST': 'mysql-db1',  # Use the name of your MySQL container
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
