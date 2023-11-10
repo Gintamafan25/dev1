@@ -107,7 +107,7 @@ DATABASES = {
         'NAME': 'angular-db',
         'USER': 'gintoki',
         'PASSWORD': 'Firestand1',
-        'HOST': 'mysql-db1',  # Use the name of your MySQL container
+        'HOST': 'mysql-db1',  
         'PORT': '3306',
     }
 }
