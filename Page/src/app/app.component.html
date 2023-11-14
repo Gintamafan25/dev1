@@ -1,1 +1,7 @@
 <app-header />
+<ul>
+    
+        <li *ngFor="let fighter of fighters$ ">
+            {{fighter.first_name }} {{fighter.initial}} {{fighter.last_name}}
+        </li>
+</ul>

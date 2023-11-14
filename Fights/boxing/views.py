@@ -8,8 +8,16 @@ from .models import *
 def index(request):
     try:
         data = Fighters.objects.all()
-        fighters = serializers.serialize("json", data)
-        return JsonResponse({"fighters":fighters})
+        fighters = [
+            {
+                "id": fighter.pk,
+                "first_name": fighter.first_name,
+                "initial": fighter.initial,
+                "last_name": fighter.last_name
+            }
+            for fighter in data
+        ]
+        return JsonResponse(fighters, safe=False)
     except TypeError:
         return JsonResponse({"empty":"empty"})
     
