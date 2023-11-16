@@ -4,12 +4,13 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DjangoApiService } from './service/django-api.service';
-import { Fighters } from '../assets/Fighters';
+import { Fighters, Register, CookieMap, Response } from '../assets/Fighters';
+import { FormComponent } from './form/form.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, HttpClientModule],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, HttpClientModule, FormComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   providers: [DjangoApiService]
@@ -36,6 +37,5 @@ export class AppComponent implements OnInit {
     })
       
   }
-
 
 }

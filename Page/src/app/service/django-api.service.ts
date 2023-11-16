@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { Fighters } from '../../assets/Fighters';
+import { Fighters, User, Register } from '../../assets/Fighters';
 import { map, catchError } from 'rxjs/operators';
 import { error } from 'console';
 
@@ -10,6 +10,9 @@ import { error } from 'console';
 })
 export class DjangoApiService {
   private url = "http://localhost:8000";
+  private user_url= "http://localhost:8000/user"
+  private register_url = "http://localhost:8000/register"
+
   constructor(private http: HttpClient) { }
 
   public getFighters(): Observable<Fighters[]> {
@@ -25,6 +28,17 @@ export class DjangoApiService {
     } else {
       console.error(error.status);
     }
-    return throwError('bad');
+    return throwError( () => new Error('bad'));
   }
+
+  public getUser(): Observable<User[]> {
+    return this.http.get<User[]>(this.user_url, {withCredentials: true})
+  }
+
+  public registerUser(userData: Register) {
+    return this.http.post(this.register_url, userData).pipe(
+      catchError(this.handleError)
+    );
+  }
+
 }
