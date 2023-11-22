@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { Fighters, User, Register } from '../../assets/Fighters';
+import { Fighters, User, Register, Response } from '../../assets/Fighters';
 import { map, catchError } from 'rxjs/operators';
 import { error } from 'console';
 
@@ -11,7 +11,7 @@ import { error } from 'console';
 export class DjangoApiService {
   private url = "http://localhost:8000";
   private user_url= "http://localhost:8000/user"
-  private register_url = "http://localhost:8000/register"
+  private register_url = "http://localhost:8000/register/"
 
   constructor(private http: HttpClient) { }
 
@@ -27,18 +27,22 @@ export class DjangoApiService {
       console.error("An error occured:", error.error.message);
     } else {
       console.error(error.status);
+      console.log(error.message)
+      console.log(error.headers)
+      console.log(error.url)
+      console.log(error.name)
     }
     return throwError( () => new Error('bad'));
   }
 
-  public getUser(): Observable<User[]> {
-    return this.http.get<User[]>(this.user_url, {withCredentials: true})
-  }
-
-  public registerUser(userData: Register) {
-    return this.http.post(this.register_url, userData).pipe(
+  public submitRegistration(data: Register) {
+    const headers = new HttpHeaders({
+      "content-type": "application/json"
+    });
+    
+    return this.http.post<Response>(this.register_url, data, { headers }).pipe(
       catchError(this.handleError)
-    );
+    )
   }
-
+  
 }

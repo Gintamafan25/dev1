@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from django.core import serializers
 from .models import *
@@ -25,12 +25,21 @@ def index(request):
         return JsonResponse({"empty":"empty"})
 
 def register(request):
+    if request.method == "OPTIONS":
+        print("Preflight request headers:", request.headers)
+        print("Preflight request method:", request.method)
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = 'http://localhost:4200'  # Replace with the actual origin of your Angular application
+        response['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        return response
     if request.method == "POST":
-        data = request.loads(json.body)
+        data = json.loads(request.body)
         username = data["username"]
         email = data["email"]
         password = data["password"]
         confirmed_password = data["confirm_password"]
+        print("trying to register")
         
         if password != confirmed_password:
             return JsonResponse({"message": "Passwords do not match"})
@@ -71,6 +80,7 @@ def register(request):
         else:
             return JsonResponse({"message": "Failed to register user"})
             
-        
+    else:
+        return JsonResponse({"message":"empty"})
         
     

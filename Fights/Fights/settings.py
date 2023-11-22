@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-@3@a5qbzhjzp9^f9v+m6d(mm==n4r^ue^c4u+8=+&^kf$0w*mb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -54,6 +54,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Fights.urls'
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000', 'http://localhost:4200', 'http://localhost:8000'
 ]
@@ -78,6 +80,8 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+
 
 TEMPLATES = [
     {

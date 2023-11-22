@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { Register, CookieMap, Response } from '../../assets/Fighters';
 import { DjangoApiService } from '../service/django-api.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -21,36 +22,25 @@ export class FormComponent {
     confirm_password: new FormControl('', Validators.required)
   })
 
+  
+
   constructor(private data: DjangoApiService ) {}
 
-  submitRegister(formData: Register) {
-    this.data.registerUser(formData).subscribe(response => {
-      const res = response as Response
-      const message = res.message
-      if (message === "Success") {
-        const token = this.getCookie('session_token')
+  
 
+  submitRegister() {
+    
+    const formValue = this.registerForm.value;
+    alert(formValue);
+
+    return this.data.submitRegistration(formValue as Register).subscribe(
+      res => {
+        alert(res)
+        console.log(res)
       }
-    })
+    )
   }
-
-  getCookie(name: string) {
-
-    const cookies: CookieMap = {}
   
-    document.cookie.split(';').forEach(function(el) {
-  
-      let [key,value] = el.split('=');
-  
-      cookies[key.trim()] = value;
-  
-    })
-  
-    return cookies[name];
-  
-  }
-
-
 }
 
 
