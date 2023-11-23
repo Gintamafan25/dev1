@@ -5,10 +5,14 @@ from django.core import serializers
 from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
+from django.views.decorators.csrf import csrf_exempt, get_token  
+
 # Create your views here.
 
 def index(request):
     print(request.COOKIES)
+    csrf_token = get_token(request)
+
     try:
         data = Fighters.objects.all()
         fighters = [
@@ -20,19 +24,20 @@ def index(request):
             }
             for fighter in data
         ]
-        return JsonResponse(fighters, safe=False)
+        response = JsonResponse({"fighters":fighters}, safe=False)
+        response.set_cookie("XSRF-TOKEN", csrf_token, domain="localhost")
+        
+        return response
     except TypeError:
         return JsonResponse({"empty":"empty"})
 
+
 def register(request):
+    
     if request.method == "OPTIONS":
         print("Preflight request headers:", request.headers)
         print("Preflight request method:", request.method)
-        response = HttpResponse()
-        response['Access-Control-Allow-Origin'] = 'http://localhost:4200'  # Replace with the actual origin of your Angular application
-        response['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        return response
+       
     if request.method == "POST":
         data = json.loads(request.body)
         username = data["username"]

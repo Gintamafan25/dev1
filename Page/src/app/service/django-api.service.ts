@@ -4,6 +4,8 @@ import { Observable, throwError } from 'rxjs';
 import { Fighters, User, Register, Response } from '../../assets/Fighters';
 import { map, catchError } from 'rxjs/operators';
 import { error } from 'console';
+import { HttpXsrfTokenExtractor } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +13,24 @@ import { error } from 'console';
 export class DjangoApiService {
   private url = "http://localhost:8000";
   private user_url= "http://localhost:8000/user"
-  private register_url = "http://localhost:8000/register/"
+  private register_url = "http://localhost:8000/register"
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private xtractor: HttpXsrfTokenExtractor) { }
 
-  public getFighters(): Observable<Fighters[]> {
-    return this.http.get<Fighters[]>(this.url).pipe(
-      catchError(this.handleError)
-    );
+  getFighters(): Observable<Fighters[]> {
+    const headers = new HttpHeaders({});
+    const xsrfToken = this.xtractor.getToken();
+    if (xsrfToken) {
+      headers.append('X-XSRF-Token', xsrfToken);
+    }
+    return this.http.get<any[]>(this.url, { headers })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
-
+  
+    
+  
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

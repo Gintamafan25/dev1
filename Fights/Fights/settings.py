@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-@3@a5qbzhjzp9^f9v+m6d(mm==n4r^ue^c4u+8=+&^kf$0w*mb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'corsheaders',
     'boxing',
     'django.contrib.admin',
@@ -160,3 +161,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
+CSRF_HEADER_NAME = "X-CSRFToken"
