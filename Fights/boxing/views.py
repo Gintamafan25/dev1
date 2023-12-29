@@ -6,22 +6,23 @@ from django.core import serializers
 from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
-from django.views.decorators.csrf import csrf_exempt, get_token  
+from django.views.decorators.csrf import csrf_exempt, get_token, ensure_csrf_cookie  
 
 # Create your views here.
 CSRF_TOKEN = None
 
+@ensure_csrf_cookie
 def csrf(request):
-    token = get_token(request)
+    token = request.META.get('CSRF_COOKIE','')
     CSRF_TOKEN = token
-    
-    response = JsonResponse({'csrfToken': CSRF_TOKEN })
-    response.set_cookie('csrftoken', CSRF_TOKEN, secure=False, domain="localhost")
-    cookie = request.COOKIES.get('csrftoken', CSRF_TOKEN)
-    print(cookie, "cookie")
-    
-    return response
-
+    print(token, "First")
+    if not request.session.session_key:
+        request.session.save()
+        print("session created")
+        
+        return JsonResponse({"csrfToken": token})
+    return JsonResponse({"csrfToken": token})
+@ensure_csrf_cookie
 def index(request):
     print(request.COOKIES)
     
@@ -40,8 +41,9 @@ def index(request):
         
     except TypeError:
         return JsonResponse({"empty":"empty"})
-
-
+    
+@csrf_exempt
+@ensure_csrf_cookie
 def register(request):
     if "csrftoken" not in request.COOKIES:
         print("missing cookies")
@@ -57,7 +59,8 @@ def register(request):
             email = data["email"]
             password = data["password"]
             confirmed_password = data["confirm_password"]
-            print("trying to register")
+            print(request.headers, "Second")
+            print(request.session)
             
             if password != confirmed_password:
                 return JsonResponse({"message": "Passwords do not match"})

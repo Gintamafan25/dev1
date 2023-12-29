@@ -43,10 +43,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -55,6 +56,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'Fights.urls'
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000', 'http://localhost:4200', 'http://localhost:8000', "http://127.0.0.1:4200", "http://127.0.0.1:8000"
@@ -70,6 +74,9 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'cache-control',
+    'csrftoken'
+    
 ]
 
 CORS_ALLOW_METHODS = [
@@ -82,8 +89,22 @@ CORS_ALLOW_METHODS = [
 ]
 
 CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = None
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_NAME = 'my_session_cookie'
 
+# Set the age of session cookies in seconds (default is 1209600 seconds or 2 weeks)
+SESSION_COOKIE_AGE = 3600  # 1 hour
+
+# Set whether the session cookie should be secure (HTTPS only)
+SESSION_COOKIE_SECURE = False  # Set to True in production if using HTTPS
+
+# Set whether the session cookie should be accessible only via JavaScript
+SESSION_COOKIE_HTTPONLY = True
+
+# Set the SameSite attribute for the session cookie (None, 'Lax', or 'Strict')
+SESSION_COOKIE_SAMESITE = None
 
 
 TEMPLATES = [
