@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
     'corsheaders',
     'boxing',
     'django.contrib.admin',
@@ -58,7 +57,7 @@ ROOT_URLCONF = 'Fights.urls'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000', 'http://localhost:4200', 'http://localhost:8000'
+    'http://localhost:3000', 'http://localhost:4200', 'http://localhost:8000', "http://127.0.0.1:4200", "http://127.0.0.1:8000"
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -81,6 +80,9 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+CSRF_COOKIE_SECURE = False
+
 
 
 
@@ -162,5 +164,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_COOKIE_NAME = "XSRF-TOKEN"
-CSRF_HEADER_NAME = "X-CSRFToken"
+

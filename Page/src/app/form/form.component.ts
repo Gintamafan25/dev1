@@ -31,11 +31,10 @@ export class FormComponent {
   submitRegister() {
     
     const formValue = this.registerForm.value;
-    alert(formValue);
+    const info = JSON.stringify(formValue)
 
-    return this.data.submitRegistration(formValue as Register).subscribe(
+    return this.data.submitRegistration(info).subscribe(
       res => {
-        alert(res)
         console.log(res)
       }
     )
