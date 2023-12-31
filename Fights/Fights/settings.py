@@ -92,7 +92,7 @@ CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = None
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-SESSION_COOKIE_NAME = 'my_session_cookie'
+SESSION_COOKIE_NAME = 'luinmys_cookie'
 
 # Set the age of session cookies in seconds (default is 1209600 seconds or 2 weeks)
 SESSION_COOKIE_AGE = 3600  # 1 hour
@@ -101,7 +101,7 @@ SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_COOKIE_SECURE = False  # Set to True in production if using HTTPS
 
 # Set whether the session cookie should be accessible only via JavaScript
-SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = False
 
 # Set the SameSite attribute for the session cookie (None, 'Lax', or 'Strict')
 SESSION_COOKIE_SAMESITE = None

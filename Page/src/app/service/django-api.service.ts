@@ -82,16 +82,21 @@ export class DjangoApiService {
 export class TokenInterceptor implements HttpInterceptor {
   constructor(private service: DjangoApiService) {}
   intercept(req:HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
-    const headers = req.headers
-    const cookie = headers.get('set-cookie');
-    console.log('Cookies:', cookie)
+   
     if (req.method === "POST") {
+    
       let token = this.service.showToken();
       console.log(token)
+      const header = req.headers
+      const cookie = header.getAll('Cookie');
+      console.log("headers", req.headers);
+      console.log("Cookie:", cookie)
+      
       let cloneReq = req.clone({
         headers: req.headers
         .set('Authorization', `bearer ${token}`)
         .set('X-CSRFToken', token)
+        
       });
       
       console.log(cloneReq.headers)

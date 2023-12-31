@@ -18,10 +18,10 @@ def csrf(request):
     print(token, "First")
     if not request.session.session_key:
         request.session.save()
-        print("session created")
         
-        return JsonResponse({"csrfToken": token})
-    return JsonResponse({"csrfToken": token})
+        
+        return JsonResponse({"customToken": token})
+    return JsonResponse({"customToken": token})
 @ensure_csrf_cookie
 def index(request):
     print(request.COOKIES)
@@ -42,25 +42,19 @@ def index(request):
     except TypeError:
         return JsonResponse({"empty":"empty"})
     
-@csrf_exempt
+
 @ensure_csrf_cookie
 def register(request):
-    if "csrftoken" not in request.COOKIES:
-        print("missing cookies")
-        print(request.COOKIES)
-    if request.method == "OPTIONS":
-        print("Preflight request headers:", request.headers)
-        print("Preflight request method:", request)
-       
+   
     if request.method == "POST":
+        
         try:
             data = json.loads(request.body)
             username = data["username"]
             email = data["email"]
             password = data["password"]
             confirmed_password = data["confirm_password"]
-            print(request.headers, "Second")
-            print(request.session)
+          
             
             if password != confirmed_password:
                 return JsonResponse({"message": "Passwords do not match"})

@@ -44,7 +44,8 @@ export class AppComponent implements OnInit {
   }
   setToken() {
     return this.data.getToken().subscribe(response => {
-      this.token = response.csrfToken
+      this.token = response.customToken
+      
       
     })
   
