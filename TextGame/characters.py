@@ -1,5 +1,5 @@
 import random
-import pygame
+
 
 class Hero:
     def __init__(self, name, Str, Int, Agi):
