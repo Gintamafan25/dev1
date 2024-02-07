@@ -1,13 +1,13 @@
 import random
 
 
-class item:
-    def __init__(self, name, str, int, agi, ability, category):
+class Item:
+    def __init__(self, name, str, int, agi,  category):
         self.name = name
         self.str = str
         self.int = int
         self.agi = agi
-        self.ability = ability
+        
         self.category = category
 
     def equip_to(self, character):
