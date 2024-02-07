@@ -1,6 +1,4 @@
 from characters import Hero, Villain
-from item import item
-from skills import Skills
 import random
 import csv
 
@@ -29,22 +27,23 @@ def main():
         chosen_str = random.randint(2, 9)
         chosen_int = random.randint(2, 9)
         chosen_agi = random.randint(2, 9)
+        rank = (chosen_str + chosen_int + chosen_agi) / 3
         
         villains.append(
-            Hero(chosen_name, chosen_str, chosen_int, chosen_agi)
+            Villain(chosen_name, chosen_str, chosen_int, chosen_agi, rank)
             )
         names.remove(chosen_name)
-        villains -= 1
+        villain_count -= 1
 
     with open("character_villain.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
 
-        writer.writerow(["name", "str", "int", "agi"])
+        writer.writerow(["name", "str", "int", "agi", "nature"])
 
         for hero in heroes:
-            writer.writerow([hero.name, hero.str, hero.int, hero.agi])
+            writer.writerow([hero.name, hero.str, hero.int, hero.agi, hero.nature])
         
         for villain in villains:
-            writer.writerow([villain.name, villain.str, villain.int, villain.agi])
+            writer.writerow([villain.name, villain.str, villain.int, villain.agi, villain.nature])
 
 main()
