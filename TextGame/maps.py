@@ -7,20 +7,23 @@ class Map:
         self.tiles = {}
     
     def create_map(self):
-        for i in self.height:
-            for j in self.width:
-                self.tiles[(i,j)] = []
+        for i in range(self.height):
+            for j in range(self.width):
+                self.tiles[(i,j)] = [Tile(i,j)]
 
-class Tiles:
-    Objects = ["Rock", "Swamp"]
+class Tile:
+    
 
-    def __init__(self, tile):
-        self.tile = tile
+    def __init__(self, coords):
+        self.tile = coords
+        self.objects = []
+    
+    def add_object(self, obj):
+        self.objects.append(obj)
     
     def check(self):
-        for obj in self.Objects:
-            if obj in self.tile:
-                return False
+        return len(self.objects) == 0
+
     
         
 

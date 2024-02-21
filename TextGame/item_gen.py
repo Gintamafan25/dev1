@@ -14,8 +14,8 @@ def main():
         chosen_str = random.randint(1,5)
         chosen_int = random.randint(1,5)
         chosen_agi = random.randint(1,5)
-        category = random.choice(cat) +  " of " + chosen_name
-        weapons.append(Item(chosen_name, chosen_str, chosen_int, chosen_agi, category))
+        category = random.choice(cat)
+        weapons.append(Item(category + " of " + chosen_name, chosen_str, chosen_int, chosen_agi, category))
         names.remove(chosen_name)
 
     with open("items.csv", "w", newline="") as csvfile:
