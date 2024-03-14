@@ -1,5 +1,5 @@
 import random, csv
-from maps import Map, Tiles
+from maps import Map, Tile
 from characters import Hero, Villain
 from item import Item
 from skills import Skills
@@ -49,6 +49,12 @@ with open("skills.csv", "r") as file:
 Agaroth = Map("Agaroth", 15, 12)
 Agaroth.create_map
 
+for i in range(Agaroth.height):
+    for j in range(Agaroth.width):
+        if i % 6 == 0 and j % 7 == 0:
+            Tile((i,j)).add_object("Blocked")
+
+Agaroth.show_map()
 
 
 

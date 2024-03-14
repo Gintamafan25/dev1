@@ -10,6 +10,15 @@ class Map:
         for i in range(self.height):
             for j in range(self.width):
                 self.tiles[(i,j)] = [Tile(i,j)]
+    
+    def show_map(self):
+        for i in range(self.height):
+            for j in range(self.width):
+                if Tile((i,j)).objects == "Blocked":
+                    print("X",end="")
+                else:
+                    print(" ", end="")
+            print("")
 
 class Tile:
     
@@ -19,10 +28,18 @@ class Tile:
         self.objects = []
     
     def add_object(self, obj):
-        self.objects.append(obj)
+        if obj not in self.objects:
+            self.objects.append(obj)
+
+    def remove_object(self, obj):
+        if obj in self.objects:
+            self.objects.remove(obj)
     
     def check(self):
-        return len(self.objects) == 0
+        if "Blocked" in self.objects:
+            return True
+        else:
+            return False
 
     
         
