@@ -4,57 +4,111 @@ from characters import Hero, Villain
 from item import Item
 from skills import Skills
 
-Heroes = []
-Villains = []
-Items = []
-Skill = []
-Location = []
-
-with open("character_villain.csv", "r") as file:
-    reader = csv.reader(file)
-    next(reader)
-    for line in reader:
-        name, str_val, int_val, agi_val, nature = line
-        str_val = int(str_val)
-        int_val = int(int_val)
-        agi_val = int(agi_val)
-        if nature == "Hero":
-            Heroes.append(Hero(name, str_val, int_val, agi_val))
-        else:
-            average = (str_val + int_val + agi_val) / 3
-            Villains.append(Villain(name, str_val, int_val, agi_val, average))
-
-with open("items.csv", "r") as file:
-    reader = csv.reader(file)
-    next(reader)
-    for line in reader:
-        name, str_val, int_val, agi_val, category = line
-        str_val = int(str_val)
-        int_val = int(int_val)
-        agi_val = int(agi_val)
+def place_characters(self,heroes, villains):
+        row = 4
+        col = 4
+        for i in range(row):
+            for j in range(col):
+                if len(self.tiles[(i,j)].objects) == 0 and len(heroes) != 0:
+                    random.shuffle(heroes)
+                    random_hero = heroes.pop(0)
+                    self.tiles[(i,j)].add_object(random_hero)
+                    
         
-        Items.append(Item(name, str_val, int_val, agi_val, category))
+        for i in range(self.height - row  , self.height ):
+            for j in range(self.width - col  , self.width ):
+                if len(self.tiles[(i,j)].objects) == 0 and len(villains) != 0:
+                    random.shuffle(villains)
+                    random_villain = villains.pop(0)
+                    self.tiles[(i,j)].add_object(random_villain)
 
-with open("skills.csv", "r") as file:
-    reader = csv.reader(file)
-    next(reader)
+def place_items(self, skills, items):
+    # Get a list of all empty tiles
+    empty_tiles = [tile for tile in self.tiles.values() if len(tile.objects) == 0]
+    
+    # Shuffle the lists of skills and items
+    random.shuffle(skills)
+    random.shuffle(items)
+    
+    # Combine skills and items into a single list
+    objects_to_place = skills + items
+    
+    # Calculate the number of items and skills to place
+    items_to_place = len(items)
+    skills_to_place = len(skills)
+    total_objects_to_place = items_to_place + skills_to_place
+    
+    # Get a random sample of empty tiles
+    num_tiles_to_use = min(total_objects_to_place, len(empty_tiles))
+    tiles_to_use = random.sample(empty_tiles, num_tiles_to_use)
+    
+    # Place items on the randomly selected tiles
+    for tile in tiles_to_use[:items_to_place]:
+        tile.add_object(items.pop(0))
+    
+    # Place skills on the remaining randomly selected tiles
+    for tile in tiles_to_use[items_to_place:]:
+        tile.add_object(skills.pop(0))
 
-    for line in reader:
-        name, category, damage, cost = line
-        damage = int(damage)
-        cost = int(cost)
+def main():
+    Heroes = []
+    Villains = []
+    Items = []
+    Skill = []
+    Location = []
 
-        Skill.append(Skills(name, category, damage, cost))
+    
 
-Agaroth = Map("Agaroth", 15, 12)
-Agaroth.create_map
 
-for i in range(Agaroth.height):
-    for j in range(Agaroth.width):
-        if i % 6 == 0 and j % 7 == 0:
-            Tile((i,j)).add_object("Blocked")
+    with open("character_villain.csv", "r") as file:
+        reader = csv.reader(file)
+        next(reader)
+        for line in reader:
+            name, str_val, int_val, agi_val, nature = line
+            str_val = int(str_val)
+            int_val = int(int_val)
+            agi_val = int(agi_val)
+            if nature == "Hero":
+                Heroes.append(Hero(name, str_val, int_val, agi_val))
+            else:
+                average = (str_val + int_val + agi_val) / 3
+                Villains.append(Villain(name, str_val, int_val, agi_val, average))
 
-Agaroth.show_map()
+    with open("items.csv", "r") as file:
+        reader = csv.reader(file)
+        next(reader)
+        for line in reader:
+            name, str_val, int_val, agi_val, category = line
+            str_val = int(str_val)
+            int_val = int(int_val)
+            agi_val = int(agi_val)
+            
+            Items.append(Item(name, str_val, int_val, agi_val, category))
+
+    with open("skills.csv", "r") as file:
+        reader = csv.reader(file)
+        next(reader)
+
+        for line in reader:
+            name, category, damage, cost = line
+            damage = int(damage)
+            cost = int(cost)
+
+            Skill.append(Skills(name, category, damage, cost))
+
+    Agaroth = Map("Agaroth", 15, 12)
+    Agaroth.create_map()
+    place_characters(Agaroth, Heroes,Villains)
+    place_items(Agaroth, Skill, Items)
+
+    Agaroth.show_map()
+
+main()
+
+
+
+
+
 
 
 
