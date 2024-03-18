@@ -1,6 +1,7 @@
 import random
 from skills import Skills
 from item import Item
+
 class Map:
     def __init__(self,name, height, width):
         self.name = name

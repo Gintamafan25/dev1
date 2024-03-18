@@ -19,7 +19,7 @@ class Hero:
         if item not in self.item:
             self.item.append(item)
         else:
-            print(f"    {self.name} already posses this item")
+            print(f"   {self.name} already posses this item")
     
     def remove_item(self, item):
         if item in self.item:

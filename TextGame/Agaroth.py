@@ -3,23 +3,27 @@ from maps import Map, Tile
 from characters import Hero, Villain
 from item import Item
 from skills import Skills
-
+from AIagent import AIAgent
+from operator import attrgetter
+import copy
 def place_characters(self,heroes, villains):
         row = 4
         col = 4
+        heroes_copy = heroes.copy()
+        villains_copy = villains.copy()
         for i in range(row):
             for j in range(col):
-                if len(self.tiles[(i,j)].objects) == 0 and len(heroes) != 0:
-                    random.shuffle(heroes)
-                    random_hero = heroes.pop(0)
+                if len(self.tiles[(i,j)].objects) == 0 and len(heroes_copy) != 0:
+                    random.shuffle(heroes_copy)
+                    random_hero = heroes_copy.pop(0)
                     self.tiles[(i,j)].add_object(random_hero)
                     
         
         for i in range(self.height - row  , self.height ):
             for j in range(self.width - col  , self.width ):
-                if len(self.tiles[(i,j)].objects) == 0 and len(villains) != 0:
-                    random.shuffle(villains)
-                    random_villain = villains.pop(0)
+                if len(self.tiles[(i,j)].objects) == 0 and len(villains_copy) != 0:
+                    random.shuffle(villains_copy)
+                    random_villain = villains_copy.pop(0)
                     self.tiles[(i,j)].add_object(random_villain)
 
 def place_items(self, skills, items):
@@ -102,6 +106,21 @@ def main():
     place_items(Agaroth, Skill, Items)
 
     Agaroth.show_map()
+
+    
+    combined_characters = Heroes + Villains
+
+    character_order = sorted(combined_characters, key=attrgetter("agi"), reverse=True)
+
+    new_agent = AIAgent(Agaroth, character_order[0])
+
+    new_agent.run()
+
+    
+
+
+    
+
 
 main()
 

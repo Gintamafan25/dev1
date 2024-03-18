@@ -14,10 +14,12 @@ class Item:
         character.str += self.str
         character.int += self.int
         character.agi += self.agi
+        character.item.append(self)
         
-    def unquip_from(self, character):
+    def unequip_from(self, character):
         character.str -= self.str
         character.int -= self.int
         character.agi -= self.agi
+        character.item.remove(self)
 
 
