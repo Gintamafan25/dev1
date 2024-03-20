@@ -6,13 +6,14 @@ from skills import Skills
 from AIagent import AIAgent
 from operator import attrgetter
 import copy
+import time
 def place_characters(self,heroes, villains):
         row = 4
         col = 4
         heroes_copy = heroes.copy()
         villains_copy = villains.copy()
-        for i in range(row):
-            for j in range(col):
+        for i in range(1, row + 1):
+            for j in range(1, col + 1):
                 if len(self.tiles[(i,j)].objects) == 0 and len(heroes_copy) != 0:
                     random.shuffle(heroes_copy)
                     random_hero = heroes_copy.pop(0)
@@ -56,7 +57,9 @@ def place_items(self, skills, items):
 
 def main():
     Heroes = []
+    
     Villains = []
+
     Items = []
     Skill = []
     Location = []
@@ -76,7 +79,7 @@ def main():
                 Heroes.append(Hero(name, str_val, int_val, agi_val))
             else:
                 average = (str_val + int_val + agi_val) / 3
-                Villains.append(Villain(name, str_val, int_val, agi_val, average))
+                Villains.append(Villain(name, str_val, int_val, agi_val, round(average)))
 
     with open("items.csv", "r") as file:
         reader = csv.reader(file)
@@ -100,23 +103,61 @@ def main():
 
             Skill.append(Skills(name, category, damage, cost))
 
+
     Agaroth = Map("Agaroth", 15, 12)
     Agaroth.create_map()
-    place_characters(Agaroth, Heroes,Villains)
-    place_items(Agaroth, Skill, Items)
 
-    Agaroth.show_map()
+    random.shuffle(Villains)
 
+    one_hero = []
+    one_hero.append(Heroes[0])
+    short_villains = []
+    need = 3
+
+    for vil in Villains:
+        if len(short_villains) > need:
+            break
+        else:
+            short_villains.append(vil)
+        
     
-    combined_characters = Heroes + Villains
+    combined_characters = Heroes + short_villains
 
     character_order = sorted(combined_characters, key=attrgetter("agi"), reverse=True)
+    characters = []
+    for character in character_order:
+        new_agent = AIAgent(Agaroth, character, Heroes, Villains)
+        characters.append(new_agent)
 
-    new_agent = AIAgent(Agaroth, character_order[0])
+    turns = 1
 
-    new_agent.run()
+    place_characters(Agaroth, Heroes,short_villains)
+    place_items(Agaroth, Skill, Items)
+    Agaroth.show_map()
 
-    
+    while len(Heroes) > 0 and len(short_villains) > 0:
+        
+        for char in characters:
+            char.make_move()
+            
+        
+            
+        for char in Heroes:
+            if char.HP <= 0:
+                Heroes.remove(char)
+        for char in short_villains:
+            if char.HP <= 0:
+                short_villains.remove(char)
+        
+        Agaroth.show_map()
+
+        time.sleep(1)
+        turns += 1
+
+    if len(Heroes) == 0:
+        print("Villains win")
+    else:
+        print("Heroes win")
 
 
     

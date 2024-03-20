@@ -11,8 +11,8 @@ class Hero:
         self.MP = 200
         self.level = 1
         self.exp = 0
-        self.item = []
-        self.skill = []
+        self.items = []
+        self.skills = []
         self.nature = "Hero"
     
     def add_item(self, item):
@@ -61,6 +61,7 @@ class Villain:
         self.str = str
         self.int = int
         self.agi = agi  
+        self.rank = rank
         self.HP = 150
         self.MP = 300
         self.items = []

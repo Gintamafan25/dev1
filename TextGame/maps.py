@@ -1,6 +1,7 @@
 import random
 from skills import Skills
 from item import Item
+from characters import Hero, Villain
 
 class Map:
     def __init__(self,name, height, width):
@@ -8,8 +9,10 @@ class Map:
         self.height = height
         self.width = width
         self.tiles = {}
+        self.hero_explored = []
+        self.villain_explored = []
     
-    def create_map(self, block_percentage=0.12):
+    def create_map(self, block_percentage=0.06):
         for i in range(self.height):
             for j in range(self.width):
                 self.tiles[(i,j)] = Tile((i,j))
@@ -36,8 +39,11 @@ class Map:
                     print("O ", end="")
                 elif has_item_or_skill == True:
                     print("I ", end="")
-                else:
+                elif isinstance(obj, Hero):
                     print("P ", end="")
+                else:
+                    print("V ",end="")
+                    
             print("")
 
 class Tile:
