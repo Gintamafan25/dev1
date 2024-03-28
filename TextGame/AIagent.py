@@ -44,23 +44,23 @@ class AIAgent:
                 for obj in self.place.tiles[(nx, ny)].objects:
                     if isinstance(obj, Hero) or isinstance(obj, Villain):
                         if obj.nature != self.character.nature:
-                            neighbor_values[5].append((nx,ny))
+                            neighbor_values[4].append((nx,ny))
                         else:
                             neighbor_values[-2].append((nx,ny))
                         
                     elif "Blocked" in self.place.tiles[(nx,ny)].objects:
                         neighbor_values[-2].append((nx,ny))
                     elif isinstance(obj, Item) or isinstance(obj, Skills):
-                        neighbor_values[4].append((nx, ny))
+                        neighbor_values[3].append((nx, ny))
                     
             elif (nx,ny) in moves_made:
                 neighbor_values[0].append((nx,ny))
             elif self.character.nature == "Hero" and (nx,ny) in hero:
-                neighbor_values[0].append((nx,ny))
+                neighbor_values[1].append((nx,ny))
             elif self.character.nature == "Villain" and (nx,ny) in vil:
-                neighbor_values[0].append((nx,ny))
+                neighbor_values[1].append((nx,ny))
             else:
-                neighbor_values[3].append((nx,ny))
+                neighbor_values[2].append((nx,ny))
 
         return neighbor_values
 
@@ -91,6 +91,8 @@ class AIAgent:
                 vil_copy.append(start)
 
         neighbors = self.get_neighbors(start[0], start[1])
+
+        
     
         neighbor_values = self.evaluate_neighbors(neighbors, moves_made_copy, hero_copy, vil_copy)
        
@@ -110,16 +112,19 @@ class AIAgent:
     def adder(self, dict1, dict2, dict3):
         for move in dict1.keys():
             for move2 in dict2.keys():
-                if (move,move2) not in dict3:
-                    dict3[(move,move2)] = 0
-                dict3[(move,move2)] += dict1[move] + dict2[move2]
+                if move != move2:
+                    if (move,move2) not in dict3:
+                        dict3[(move,move2)] = 0
+                    dict3[(move,move2)] += dict1[move] + dict2[move2]
             
         
     def pick_move(self):
         start = self.location()
         sorted_best_move = {}
         best_move = []
-        distance_value = []
+        distance_value = {}
+        normalized_distance_value = {}
+        next_move = {}
         if start:
             coords, player = start
             x, y = coords 
@@ -132,36 +137,53 @@ class AIAgent:
                 if (x,y) not in self.place.villain_explored:
                     self.place.villain_explored.append((x,y))
             
-            next_move = {}
+            
             move_score = self.predicter(coords)
         
             future_score = self.deep_search(move_score)
             self.adder(move_score, future_score, next_move)
             sorted_best_move = sorted(next_move.items(), key=lambda x: x[1], reverse=True)
             
-            if self.character.name == "Sam":
-                print(sorted_best_move, "sorted")
+            
 
         for move, move2 in sorted_best_move:
             center = (round(self.place.height/2), round(self.place.width/2))
             for cords in move:
                 x, y = cords
                 distance = math.sqrt((x - center[0])**2 + (y - center[1])**2)
-                if self.character.name == "Sam":
-                    distance_value.append((cords, distance))
+                
+                
+                distance_value[(cords)] = distance
+            
         
-        d = np.array(distance_value)
+        if distance_value:
+            d = np.array(list(distance_value.values()))
 
-        a = d.min()
-        b = d.max()
+            a = d.min()
+            b = d.max()
 
-        d = (d-a) / (b-a)
+            nd = (d-a) / (b-a)
 
-        if len(d) > 0:
-            print(d)
+            normalized_distance_value = {key: round(value,2) for key, value in zip(distance_value.keys(), nd)}
+            
 
+        for move, value in sorted_best_move:
+            move1, move2 = move
+            for coord, norm_val in normalized_distance_value.items():
+                if coord == move1:
+                    next_move[move] -= norm_val
 
-        for move, move2 in sorted_best_move:
+        
+                    
+        
+        sorted_best_move = sorted(next_move.items(), key=lambda x: x[1], reverse=True)
+
+        print(sorted_best_move, "sorted")
+
+        #if self.character.name == "Spirta":
+            #print(sorted_best_move, "sorted")
+            
+        for move, value in sorted_best_move:
             new_x, new_y = move
             if new_x in self.moves_made:
                 continue
@@ -177,8 +199,12 @@ class AIAgent:
             for move, move2 in sorted_best_move:
                 new_x, new_y = move
 
-                best_move.append(new_x)
-                break
+                if new_x == self.moves_made[len(self.moves_made) - 1]:
+                    continue
+                else:
+
+                    best_move.append(new_x)
+                    break
             
         return best_move 
 
