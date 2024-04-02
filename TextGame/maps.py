@@ -2,6 +2,7 @@ import random
 from skills import Skills
 from item import Item
 from characters import Hero, Villain
+from termcolor import colored
 
 class Map:
     def __init__(self,name, height, width):
@@ -36,13 +37,13 @@ class Map:
                 if "Blocked" in self.tiles[(i,j)].objects:
                     print("X ",end="")
                 elif  len(self.tiles[(i,j)].objects) == 0:
-                    print("O ", end="")
+                    print("_ ", end="")
                 elif has_item_or_skill == True:
-                    print("I ", end="")
+                    print(colored("I ", "yellow"), end="")
                 elif isinstance(obj, Hero):
-                    print("P ", end="")
+                    print(colored("P ", "blue"), end="")
                 else:
-                    print("V ",end="")
+                    print(colored("V ", "red"),end="")
                     
             print("")
 

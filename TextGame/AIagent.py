@@ -7,6 +7,7 @@ from interactions import *
 import copy
 import math
 import numpy as np
+from termcolor import colored
 class AIAgent:
     def __init__(self, place, character, heroes, villains):
         self.place = place
@@ -138,23 +139,22 @@ class AIAgent:
                     self.place.villain_explored.append((x,y))
             
             
-            move_score = self.predicter(coords)
-        
-            future_score = self.deep_search(move_score)
-            self.adder(move_score, future_score, next_move)
+            next_move = self.predicter(coords)
             sorted_best_move = sorted(next_move.items(), key=lambda x: x[1], reverse=True)
+        
             
             
 
-        for move, move2 in sorted_best_move:
+        for move, value in sorted_best_move:
+            x,y = move
             center = (round(self.place.height/2), round(self.place.width/2))
-            for cords in move:
-                x, y = cords
-                distance = math.sqrt((x - center[0])**2 + (y - center[1])**2)
-                
-                
-                distance_value[(cords)] = distance
             
+                
+            distance = math.sqrt((x - center[0])**2 + (y - center[1])**2)
+            
+            
+            distance_value[(x,y)] = distance
+        
         
         if distance_value:
             d = np.array(list(distance_value.values()))
@@ -168,43 +168,54 @@ class AIAgent:
             
 
         for move, value in sorted_best_move:
-            move1, move2 = move
-            for coord, norm_val in normalized_distance_value.items():
-                if coord == move1:
-                    next_move[move] -= norm_val
-
-        
-                    
-        
-        sorted_best_move = sorted(next_move.items(), key=lambda x: x[1], reverse=True)
-
-        print(sorted_best_move, "sorted")
-
-        #if self.character.name == "Spirta":
-            #print(sorted_best_move, "sorted")
             
-        for move, value in sorted_best_move:
-            new_x, new_y = move
-            if new_x in self.moves_made:
-                continue
-            elif self.character.nature == "Hero" and new_x in self.place.hero_explored:
-                continue
-            elif self.character.nature == "Villain" and new_x in self.place.villain_explored:
-                continue
-            else:
-                best_move.append(new_x)
-                break
+            for coord, norm_val in normalized_distance_value.items():
+                if coord == move:
+                    next_move[move] -= norm_val
         
-        if len(best_move) == 0:
-            for move, move2 in sorted_best_move:
-                new_x, new_y = move
+    
 
-                if new_x == self.moves_made[len(self.moves_made) - 1]:
-                    continue
-                else:
+        for tile in self.place.hero_explored:
+            if self.character.nature == "Hero":
+                for object in self.place.tiles[tile].objects:
+                    if isinstance(object,Villain):
+                       
+                        if tile not in next_move:
+                            next_move[tile] = 0
+                        next_move[tile] += 1
+                        neighbors2 = self.get_neighbors(tile[0], tile[1])
+                        for neigh in neighbors2:
+                            if neigh not in next_move:
+                                next_move[neigh] = 0
+                            next_move[neigh] += .25
+                
+                break
+            for tile in self.place.villain_explored:
+                if self.character.nature == "Villain":
+                    for object in self.place.tiles[tile].objects:
+                        if isinstance(object,Hero):
+                            if tile not in next_move:
+                                next_move[tile] = 0
+                            next_move[tile] += 1
+                            neighbors2 = self.get_neighbors(tile[0], tile[1])
+                            for neigh in neighbors2:
+                                if neigh not in next_move:
+                                    next_move[neigh] = 0
+                                next_move[neigh] += .25
+                        break
 
-                    best_move.append(new_x)
-                    break
+
+
+        sorted_best_move = sorted(next_move.items(), key=lambda x: x[1], reverse=True)
+        
+        
+        
+        
+        
+        
+        for move, value in sorted_best_move:
+            best_move.append(move)
+            break
             
         return best_move 
 
@@ -213,11 +224,14 @@ class AIAgent:
         
         if start:
             location = self.location()
+            if location == None:
+                return
             coords, player = location
             
             print(coords, "start")
+            
     
-            territory_objects = self.place.tiles[(start[0][0], start[0][1])].objects
+            territory_objects = self.place.tiles[start[0]].objects
             if territory_objects:
                 territory = territory_objects[0]
             else:
@@ -226,17 +240,17 @@ class AIAgent:
             print(f"{self.character.name, self.character.HP, self.character.nature} moves to {start}")
 
             if isinstance(territory, Item) or isinstance(territory,Skills):
-                self.place.tiles[(start[0][0],start[0][1])].remove_object(territory)
+                self.place.tiles[(start[0][0], start[0][1])].remove_object(territory)
                 self.place.tiles[coords].remove_object(self.character)
                 self.place.tiles[(start[0][0], start[0][1])].add_object(self.character)
                 pick_up_item(self.place, self.character, start[0][0], start[0][1])
-                print(f"{self.character.name} picks up {territory.name}")
+                print(colored((f"{self.character.name} picks up {territory.name}"), "cyan"))
                 return
 
                 
             elif isinstance(territory,Hero) or isinstance(territory, Villain):
                 damage = 0
-                exp = 1
+                exp = 3
                 if territory.nature == self.character.nature:
                     return 
                     
@@ -251,6 +265,8 @@ class AIAgent:
                     print(f"{self.character.name} dealt {damage} points of damage to {territory.name}")
                     
                     if territory.HP <= 0:
+                    
+                        
                         killed(self.place, self.character, territory, coords, start)
                         if territory.nature == "Hero":
                             for char in self.heroes:
@@ -260,6 +276,7 @@ class AIAgent:
                             for char in self.villains:
                                 if char == territory:
                                     self.villains.remove(territory)
+                        
                     else:
                         if self.character.nature == "Hero":
                             self.character.gain_exp(exp) 
@@ -278,17 +295,19 @@ class AIAgent:
                         print(f"{territory.name} dealt {damage} to {self.character.name}")
 
                         if self.character.HP <= 0:
+                        
                             killed(self.place, self.character, territory, coords, start)
                             if self.character.nature == "Hero":
                                 for char in self.heroes:
-                                    if char == territory:
+                                    if char == self.character:
                                         self.heroes.remove(self.character)
                                         return
                             else:
                                 for char in self.villains:
-                                    if char == territory:
+                                    if char == self.character:
                                         self.villains.remove(self.character)
                                         return
+                           
 
                 else:
                     if territory.str >= territory.int:
@@ -300,17 +319,20 @@ class AIAgent:
                     print(f"{territory.name} dealt {damage} to {self.character.name}")
 
                     if self.character.HP <= 0:
+                        
                         killed(self.place, self.character, territory, coords, start)
                         if self.character.nature == "Hero":
                             for char in self.heroes:
-                                if char == territory:
+                                if char == self.character:
                                     self.heroes.remove(self.character)
                                     return
                         else:
                             for char in self.villains:
-                                if char == territory:
+                                if char == self.character:
                                     self.villains.remove(self.character)
                                     return
+                        
+                        
                     else:
                         if self.character.str >= self.character.int:
                             damage = melee_attack(self.character, territory)
@@ -321,6 +343,7 @@ class AIAgent:
                         print(f"{self.character.name} dealt {damage} points of damage to {territory.name}")
                         
                         if territory.HP <= 0:
+                            
                             killed(self.place, self.character, territory, coords, start)
                             if territory.nature == "Hero":
                                 for char in self.heroes:
@@ -330,6 +353,7 @@ class AIAgent:
                                 for char in self.villains:
                                     if char == territory:
                                         self.villains.remove(territory)
+                            
                         else:
                             if self.character.nature == "Hero":
                                 self.character.gain_exp(exp)

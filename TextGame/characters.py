@@ -1,5 +1,5 @@
 import random
-
+from termcolor import colored
 
 class Hero:
     def __init__(self, name, Str, Int, Agi):
@@ -34,24 +34,30 @@ class Hero:
             self.skills.remove(skill)
 
     def check_level(self):
-        limit = self.level * 15
+        limit = self.level * 10
         if self.exp >= limit:
             self.str += 1
             self.int += 1
             self.agi += 1
             self.level += 1
             self.exp = 0
-            if self.HP < 100:
-                self.HP += (self.HP - 100) * -1
-            if self.MP < 200:
-                self.MP += (self.MP - 200) * -1
-            print(f"    {self.name} Has Leveled Up!")
+            self.HP += self.level * 10
+            self.MP += self.level * 20
+            if self.HP > 100:
+                self.HP = 100
+            if self.MP > 200:
+                self.MP = 200
+
+            
+            print(colored((f"    {self.name} Has Leveled Up! And has {self.HP} HP"), "green"))
     
     def gain_exp(self, exp):
         if self.level == 5:
-            print(f"    {self.name} has reached max level")
+            print(colored((f"    {self.name} has reached max level"), "magenta"))
         else:
+            
             self.exp += exp
+            print(colored((f"{self.name} has {self.exp} exp points and has {self.HP} HP"), "grey"))
             self.check_level()
             
                 

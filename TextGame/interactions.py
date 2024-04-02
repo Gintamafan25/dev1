@@ -3,6 +3,7 @@ from skills import Skills
 from characters import Hero, Villain
 from maps import Map
 import random
+from termcolor import colored
 
 def pick_up_item(place, character, x, y):
     for obj in place.tiles[(x,y)].objects:
@@ -51,15 +52,18 @@ def magical_attack(attacker, defender):
 
 def killed(place, initiator, defender, initiator_cords, defender_coords):
     
-    if initiator.nature == "Hero":
-        initiator.gain_exp(6 + round(defender.rank))
-        print(f"{initiator.name} gained {6 + round(defender.rank)} Exp ")
-        
-    else:
-        initiator.kills.append(defender)
-        print(f"{initiator.name} killed {defender.name} ")
+    
     
     if defender.HP <= 0:
+        if initiator.nature == "Hero":
+            initiator.gain_exp(6 + round(defender.rank))
+            print(colored((f"{initiator.name} gained {6 + round(defender.rank)} Exp "), "green"))
+            print(colored((f"{initiator.name} killed {defender.name} "), "red"))
+        
+        else:
+            initiator.kills.append(defender)
+            print(colored((f"{initiator.name} killed {defender.name} "), "red"))
+        
         
         place.tiles[defender_coords[0]].remove_object(defender)
         place.tiles[initiator_cords].remove_object(initiator)
@@ -68,7 +72,7 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
         print(f"{defender.name} died, {initiator.name} moves to {defender_coords}")
 
         if len(defender.items) > 0:
-            print(f"{defender.name} dropped items")
+            print(colored((f"{defender.name} dropped items"), "orange"))
 
             for item in defender.items:
                 open_space = [tile for tile in place.tiles.values() if len(tile.objects) == 0]
@@ -87,10 +91,21 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
                 defender.skills.remove(skill)
 
     elif initiator.HP <= 0:
+        
+        if defender.nature == "Hero":
+            defender.gain_exp(6 + round(initiator.rank))
+            print(colored((f"{defender.name} gained {6 + round(initiator.rank)} Exp "), "green"))
+            print(colored((f"{defender.name} killed {initiator.name} "), "red"))
+
+        
+        else:
+            defender.kills.append(initiator)
+            print(colored((f"{defender.name} killed {initiator.name} "), "red"))
+
         place.tiles[initiator_cords].remove_object(initiator)
         print(f"{defender.name} defended {defender_coords}")
         if len(initiator.items) > 0:
-            print(f"{initiator.name} dropped items")
+            print(colored((f"{initiator.name} dropped items"), "orange"))
 
             for item in initiator.items:
                 open_space = [tile for tile in place.tiles.values() if len(tile.objects) == 0]

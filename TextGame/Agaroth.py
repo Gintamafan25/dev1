@@ -7,13 +7,14 @@ from AIagent import AIAgent
 from operator import attrgetter
 import copy
 import time
+from termcolor import colored
 def place_characters(self,heroes, villains):
         row = 4
         col = 4
         heroes_copy = heroes.copy()
         villains_copy = villains.copy()
-        for i in range(1, row + 1):
-            for j in range(1, col + 1):
+        for i in range(row  ):
+            for j in range(col ):
                 if len(self.tiles[(i,j)].objects) == 0 and len(heroes_copy) != 0:
                     random.shuffle(heroes_copy)
                     random_hero = heroes_copy.pop(0)
@@ -121,7 +122,7 @@ def main():
             short_villains.append(vil)
         
     
-    combined_characters = Heroes + short_villains
+    combined_characters = Heroes + Villains
 
     character_order = sorted(combined_characters, key=attrgetter("agi"), reverse=True)
     characters = []
@@ -131,11 +132,11 @@ def main():
 
     turns = 1
 
-    place_characters(Agaroth, Heroes,short_villains)
+    place_characters(Agaroth, Heroes,Villains)
     place_items(Agaroth, Skill, Items)
     Agaroth.show_map()
 
-    while len(Heroes) > 0 and len(short_villains) > 0:
+    while len(Heroes) > 0 and len(Villains) > 0:
         
         for char in characters:
             char.make_move()
@@ -145,9 +146,9 @@ def main():
         for char in Heroes:
             if char.HP <= 0:
                 Heroes.remove(char)
-        for char in short_villains:
+        for char in Villains:
             if char.HP <= 0:
-                short_villains.remove(char)
+                Villains.remove(char)
         
         Agaroth.show_map()
 
@@ -156,7 +157,11 @@ def main():
 
     if len(Heroes) == 0:
         print("Villains win")
+        for vil in Villains:
+            print(colored(vil.name, "red"))
     else:
+        for hero in Heroes:
+            print(colored(hero.name, "green"))
         print("Heroes win")
 
 
