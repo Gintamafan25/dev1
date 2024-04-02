@@ -1,0 +1,8 @@
+name,category,damage,cost
+Fireball,Magic,5,20
+Lightning,Magic,7,30
+Frost Bite,Magic,12,100
+Strike,Physical,6,20
+Sneak Attack,Physical,10,50
+hit,Physical,3,5
+Magical Shot,Magical,2,5
