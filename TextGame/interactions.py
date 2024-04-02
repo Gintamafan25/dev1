@@ -5,20 +5,26 @@ from maps import Map
 import random
 from termcolor import colored
 
-def pick_up_item(place, character, x, y):
-    for obj in place.tiles[(x,y)].objects:
-        if isinstance(obj, Item):
-            if obj not in character.items:
-                obj.equip_to(character)
-        elif isinstance(obj, Skills):
-            if obj not in character.skills:
-                character.skills.append(obj)
+def pick_up_item(item, character):
+
+    if isinstance(item, Item):
+        if item not in character.items:
+            item.equip_to(character)
+            
+    elif isinstance(item, Skills):
+        if item not in character.skills:
+            character.skills.append(item)
+    
 
 def melee_attack(attacker, defender):
     power = attacker.str
     defence = defender.str
     damage = 4
     
+    if attacker.skills:
+        for ski in attacker.skills:
+            if ski.category == "Physical":
+                
 
     if power >= defence:
         difference = power - defence
@@ -51,9 +57,6 @@ def magical_attack(attacker, defender):
     return round(damage,1)
 
 def killed(place, initiator, defender, initiator_cords, defender_coords):
-    
-    
-    
     if defender.HP <= 0:
         if initiator.nature == "Hero":
             initiator.gain_exp(6 + round(defender.rank))
@@ -72,7 +75,7 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
         print(f"{defender.name} died, {initiator.name} moves to {defender_coords}")
 
         if len(defender.items) > 0:
-            print(colored((f"{defender.name} dropped items"), "orange"))
+            print(colored((f"{defender.name} dropped items"), "yellow"))
 
             for item in defender.items:
                 open_space = [tile for tile in place.tiles.values() if len(tile.objects) == 0]
@@ -87,7 +90,7 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
                 open_space = [tile for tile in place.tiles.values() if len(tile.objects) == 0]
                 random.shuffle(open_space)
                 open_space[0].add_object(skill)
-            for skill in defender.skill:
+            for skill in defender.skills:
                 defender.skills.remove(skill)
 
     elif initiator.HP <= 0:
@@ -105,13 +108,13 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
         place.tiles[initiator_cords].remove_object(initiator)
         print(f"{defender.name} defended {defender_coords}")
         if len(initiator.items) > 0:
-            print(colored((f"{initiator.name} dropped items"), "orange"))
+            print(colored((f"{initiator.name} dropped items"), "yellow"))
 
             for item in initiator.items:
                 open_space = [tile for tile in place.tiles.values() if len(tile.objects) == 0]
                 random.shuffle(open_space)
                 open_space[0].add_object(item)
-            for item in defender.item:
+            for item in defender.items:
                 item.unequip_from(defender)
 
         if len(initiator.skills) > 0:
@@ -121,9 +124,63 @@ def killed(place, initiator, defender, initiator_cords, defender_coords):
                 random.shuffle(open_space)
                 open_space[0].add_object(skill)
             for skill in defender.skills:
-                defender.remove(skill)
+                defender.skills.remove(skill)
 
+
+def battle(char1, char2, place, coords, start, heroes, villains):
+    exp = 3
+    damage = 0
+    if char1.str >= char1.int:
+        damage = melee_attack(char1, char2)
+    else:
+        damage = magical_attack(char1, char2)
     
+    char2.HP -= damage
+    print(colored((f"{char1.name} dealt {damage} points of damage to {char2.name}"), "red"))
+    
+    if char2.HP <= 0:
+    
+        killed(place, char1, char2, coords, start)
+        if char2.nature == "Hero":
+            for char in heroes:
+                if char == char2:
+                    heroes.remove(char2)
+        else:
+            for char in villains:
+                if char == char2:
+                    villains.remove(char2)
+        
+    else:
+        if char1.nature == "Hero":
+            char1.gain_exp(exp) 
+            print(colored((f"{char1.name} gained {exp} Exp "), "green"))
+        else:
+            char2.gain_exp(exp) 
+            print(colored((f"{char2.name} gained {exp} Exp"), "green"))
+    
+        if char2.str >= char2.int:
+            damage = melee_attack(char2, char1)
+        else:
+            damage = magical_attack(char2, char1)
+        
+        char1.HP -= damage
+
+        print(colored((f"{char2.name} dealt {damage} to {char1.name}"), "red"))
+
+        if char1.HP <= 0:
+        
+            killed(place, char1, char2, coords, start)
+            if char1.nature == "Hero":
+                for char in heroes:
+                    if char == char1:
+                        heroes.remove(char1)
+                        return
+            else:
+                for char in villains:
+                    if char == char1:
+                        villains.remove(char1)
+                        return
+
 
 
 

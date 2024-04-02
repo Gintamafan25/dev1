@@ -11,15 +11,18 @@ class Item:
         self.category = category
 
     def equip_to(self, character):
+       
         character.str += self.str
         character.int += self.int
         character.agi += self.agi
-        character.item.append(self)
+    
+        character.items.append(self)
+        
         
     def unequip_from(self, character):
         character.str -= self.str
         character.int -= self.int
         character.agi -= self.agi
-        character.item.remove(self)
+        character.items.remove(self)
 
 

@@ -105,7 +105,7 @@ def main():
             Skill.append(Skills(name, category, damage, cost))
 
 
-    Agaroth = Map("Agaroth", 15, 12)
+    Agaroth = Map("Agaroth", 20, 20)
     Agaroth.create_map()
 
     random.shuffle(Villains)
@@ -162,6 +162,7 @@ def main():
     else:
         for hero in Heroes:
             print(colored(hero.name, "green"))
+            print(hero.str, hero.agi, hero.int,  hero.level, hero.items, hero.skills, hero.exp)
         print("Heroes win")
 
 

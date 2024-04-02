@@ -77,11 +77,11 @@ class Villain:
 
     def add_item(self, item):
         if item not in self.item:
-            self.item.append(item)
+            self.items.append(item)
     
     def remove_item(self, item):
         if item in self.item:
-            self.item.remove(item)
+            self.items.remove(item)
 
     def add_kill(self, name):
         if name not in self.kills:
